@@ -16,7 +16,7 @@ const emit = defineEmits(["select", "delete"]);
 const currentIndex = ref(0);
 const itemsPerView = ref(3);
 const canScrollLeft = ref(false);
-const canScrollRight = ref(false);
+const canScrollRight = ref(true);
 const scrollContainerRef = ref(null);
 
 const iconSize = useIconSize(24, 12);
@@ -52,6 +52,8 @@ const scrollRight = () => {
   scrollToIndex(Math.min(maxIndex, currentIndex.value + 1));
 };
 
+const showArrows = () => props.locations.length > itemsPerView.value;
+
 onMounted(() => {
   updateItems();
   window.addEventListener("resize", updateItems);
@@ -72,12 +74,11 @@ watch(
 
 <template>
   <div v-if="locations?.length" class="last-locations-section">
-    <h2 class="section-title">Last locations:</h2>
-
     <div class="locations-carousel">
       <button
-        v-if="locations.length > itemsPerView && canScrollLeft"
+        v-if="showArrows()"
         class="carousel-arrow carousel-arrow-left"
+        :disabled="!canScrollLeft"
         @click="scrollLeft"
       >
         <ArrowLeftIcon :width="iconSize" :height="iconSize" />
@@ -107,8 +108,9 @@ watch(
       </div>
 
       <button
-        v-if="locations.length > itemsPerView && canScrollRight"
+        v-if="showArrows()"
         class="carousel-arrow carousel-arrow-right"
+        :disabled="!canScrollRight"
         @click="scrollRight"
       >
         <ArrowRightIcon :width="iconSize" :height="iconSize" />
